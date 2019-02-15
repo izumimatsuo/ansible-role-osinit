@@ -1,0 +1,31 @@
+---
+- name: update yum repository
+  yum:
+    name: '*'
+    state: latest
+
+- name: install base packages
+  yum:
+    name:
+      - git
+      - chrony
+      - libselinux-python
+      - selinux-policy
+
+- name: set selinux disabled
+  selinux:
+    state: disabled
+
+- name: "set timezone {{ osinit_timezone }}"
+  timezone:
+    name: "{{ osinit_timezone }}"
+
+- name: detected locale status
+  shell: "cat /etc/locale.conf | grep {{ osinit_locale }}"
+  register: locale_status
+  failed_when: locale_status.rc not in [0, 1]
+  changed_when: false
+
+- name: "set locale {{ osinit_locale }}"
+  shell: "localectl set-locale LANG={{ osinit_locale }}"
+  when: locale_status.rc == 1
