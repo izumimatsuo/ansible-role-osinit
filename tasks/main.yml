@@ -12,20 +12,22 @@
       - libselinux-python
       - selinux-policy
 
-- name: set selinux disabled
+- name: " {{ osinit_selinux }} selinux"
   selinux:
-    state: disabled
+    state: "{{ osinit_selinux }}"
 
-- name: "set timezone {{ osinit_timezone }}"
+- name: set timezone
   timezone:
     name: "{{ osinit_timezone }}"
 
 - name: detected locale status
   shell: "cat /etc/locale.conf | grep {{ osinit_locale }}"
   register: locale_status
-  failed_when: locale_status.rc not in [0, 1]
-  changed_when: false
+  check_mode: no
+  failed_when: no
+  changed_when: locale_status.rc != 0
 
-- name: "set locale {{ osinit_locale }}"
+- name: set locale
   shell: "localectl set-locale LANG={{ osinit_locale }}"
-  when: locale_status.rc == 1
+  check_mode: no
+  when: locale_status is changed

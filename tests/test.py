@@ -1,14 +1,14 @@
 # -*- coding:utf8 -*-
 
-def test_[template]_is_installed(host):
-    [template] = host.package("[template]")
-    assert [template].is_installed
-    assert [template].version.startswith("[version]")
+def test_os_info_distribution(host):
+    assert host.system_info.distribution == "centos"
+    assert "7.6" in host.run("cat /etc/redhat-release").stdout
 
-def test_[template]_running_and_enabled(host):
-    [template] = host.service("[template]")
-    assert [template].is_running
-    assert [template].is_enabled
+def test_os_info_selinux(host):
+    assert "Disabled" in host.run("getenforce").stdout
 
-def test_[template]_is_listen(host):
-    assert host.socket("tcp://0.0.0.0:[port]").is_listening
+def test_os_env_timezone(host):
+    assert "Asia/Tokyo" in host.run("timedatectl | grep 'Time zone:'").stdout
+
+def test_os_env_locale(host):
+    assert "ja_JP.UTF-8" in host.run("localectl | grep Locale").stdout

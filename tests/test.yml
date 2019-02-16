@@ -3,6 +3,13 @@
   connection: local
   remote_user: docker
   tasks:
+    - name: detected test container
+      shell: docker ps | grep localhost
+      register: container_status
+      check_mode: no
+      failed_when: no
+      changed_when: container_status.rc != 0
+
     - name: start test container
       docker_container:
         image: centos:centos7
@@ -10,6 +17,7 @@
         privileged: yes
         detach: yes
         command: /sbin/init
+      when: container_status is changed
 
 - hosts: localhost
   connection: docker
@@ -17,10 +25,14 @@
   tasks:
     - name: setup test container
       yum:
-        name: net-tools
+        name:
+          - net-tools
+          - libselinux-python
+          - selinux-policy
 
 - hosts: localhost
   connection: docker
   remote_user: root
   roles:
     - role: .
+      tags: skip
