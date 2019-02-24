@@ -106,7 +106,7 @@
     state: enabled
   with_items: "{{ firewall_enabled_ports }}"
   notify: restart firewalld service
-    
+
 - name: unset firewall default rules
   firewalld:
     service: "{{ item }}"
