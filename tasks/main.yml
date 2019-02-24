@@ -12,21 +12,21 @@
       - libselinux-python
       - selinux-policy
 
-- name: " {{ osinit_selinux }} selinux"
+- name: " {{ env_selinux }} selinux"
   selinux:
-    state: "{{ osinit_selinux }}"
+    state: "{{ env_selinux }}"
 
 # ----- locale -----
 
 - name: detected locale status
-  shell: "cat /etc/locale.conf | grep {{ osinit_locale }}"
+  shell: "cat /etc/locale.conf | grep {{ env_locale }}"
   register: locale_status
   check_mode: no
   failed_when: no
   changed_when: locale_status.rc != 0
 
 - name: set locale
-  command: "localectl set-locale LANG={{ osinit_locale }}"
+  command: "localectl set-locale LANG={{ env_locale }}"
   check_mode: no
   when: locale_status is changed
 
@@ -34,7 +34,7 @@
 
 - name: set timezone
   timezone:
-    name: "{{ osinit_timezone }}"
+    name: "{{ env_timezone }}"
 
 - name: install chrony package
   yum:
@@ -84,13 +84,13 @@
     state: started
     enabled: yes
 
-- name: detected firewall rules
+- name: detected firewall rules (direct rule)
   command: iptables -L INPUT_direct
   register: firewall_rules
   failed_when: no
   changed_when: firewall_rules.rc != 0
 
-- name: set firewall rules
+- name: set firewall rules (direct rule)
   command: "firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 0 {{ item }}"
   with_items:
     - '-p tcp --tcp-flags ALL NONE -j DROP'
@@ -98,6 +98,24 @@
     - '-p tcp --tcp-flags ALL ALL -j DROP'
   notify: restart firewalld service
   when: firewall_rules is changed
+
+- name: set firewall rules (ports)
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  with_items: "{{ firewall_enabled_ports }}"
+  notify: restart firewalld service
+    
+- name: unset firewall default rules
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: disabled
+  with_items:
+    - ssh
+    - dhcpv6-client
+  notify: restart firewalld service
 
 # ----- kernel parameters -----
 
@@ -107,11 +125,13 @@
     value: "{{ item.value }}"
     state: present
   with_items:
-    - name: net.ipv6.conf.all.disable_ipv6
-      value: 1
-    - name: net.ipv6.conf.default.disable_ipv6
-      value: 1
-    - name: net.ipv4.tcp_syncookies
-      value: 1
-    - name: net.ipv4.icmp_echo_ignore_broadcasts
-      value: 1
+    - { name: net.ipv6.conf.all.disable_ipv6, value: 1 }
+    - { name: net.ipv6.conf.default.disable_ipv6, value: 1 }
+    - { name: net.ipv4.tcp_syncookies, value: 1 }
+    - { name: net.ipv4.icmp_echo_ignore_broadcasts, value: 1 }
+    - { name: net.ipv4.ip_forward, value: 0 }
+    - { name: net.ipv4.conf.all.rp_filter, value: 1 }
+    - { name: net.ipv4.conf.default.rp_filter, value: 1 }
+    - { name: net.ipv4.conf.all.accept_redirects, value: 0 }
+    - { name: net.ipv4.conf.default.accept_redirects, value: 0 }
+    - { name: net.ipv4.conf.all.log_martians, value: 1 }

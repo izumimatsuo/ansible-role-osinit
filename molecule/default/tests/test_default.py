@@ -12,7 +12,7 @@ def test_os_env_distribution(host):
 
 
 def test_os_env_selinux(host):
-    assert 'Disabled' in host.check_output('getenforce')
+    assert 'Disabled' == host.check_output('getenforce')
 
 
 def test_os_env_timezone(host):
@@ -28,6 +28,12 @@ def test_os_env_kernel_parameters(host):
     assert 1 == host.sysctl('net.ipv6.conf.default.disable_ipv6')
     assert 1 == host.sysctl('net.ipv4.tcp_syncookies')
     assert 1 == host.sysctl('net.ipv4.icmp_echo_ignore_broadcasts')
+    assert 1 == host.sysctl('net.ipv4.conf.all.rp_filter')
+    assert 1 == host.sysctl('net.ipv4.conf.default.rp_filter')
+    assert 0 == host.sysctl('net.ipv4.conf.all.accept_redirects')
+    assert 0 == host.sysctl('net.ipv4.conf.default.accept_redirects')
+    assert 1 == host.sysctl('net.ipv4.conf.all.log_martians')
+    assert 0 == host.sysctl('net.ipv4.ip_forward')
 
 
 def test_os_ntp_is_installed(host):
@@ -79,3 +85,4 @@ def test_os_firewalld_rules(host):
     assert 0 == host.run(rule1).rc
     assert 0 == host.run(rule2).rc
     assert 0 == host.run(rule3).rc
+    assert '' == host.check_output('firewall-cmd --list-services')

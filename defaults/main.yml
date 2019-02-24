@@ -1,4 +1,5 @@
 ---
-osinit_selinux: disabled
-osinit_timezone: Asia/Tokyo
-osinit_locale: ja_JP.UTF-8
+env_selinux: disabled
+env_timezone: Asia/Tokyo
+env_locale: ja_JP.UTF-8
+firewall_enabled_ports: [22/tcp]
