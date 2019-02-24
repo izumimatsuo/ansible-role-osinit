@@ -8,6 +8,7 @@ CentOS 7 の初期設定をおこなう ansible role です。
   * ja_JP.UTF-8
 * timezone and ntp の設定
   * Asia/Tokyo
+  * ntp クライアントからの接続不可
 * sshd の設定
   * ed25519の鍵だけを許可
 * firewall の設定
@@ -27,7 +28,9 @@ CentOS 7 の初期設定をおこなう ansible role です。
 以下の設定項目は上書き可能。
 
 項目名                |デフォルト値|説明
-----------------------|------------|----------
+----------------------|------------|-----------------------------------------------------
 env_timezone          |Asia/Tokyo  |タイムゾーン
 env_locale            |ja_JP.UTF-8 |言語・文字コード
+ntp_public_servers    |ntp.nict.jp |問合せ先 NTP サーバ（複数可）
+ntp_allow_network     |NULL        |NTP クライアントからアクセス許可する network アドレス
 firewall_enabled_ports|22/tcp      |公開するポート番号（複数可）
