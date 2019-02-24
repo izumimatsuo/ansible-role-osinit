@@ -1,14 +1,14 @@
 ---
-- name: update yum repository
-  yum:
-    name: '*'
-    state: latest
 
-- name: install base packages
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+# ----- selinux -----
+
+- name: install selinux-tool package
   yum:
     name:
-      - git
-      - chrony
       - libselinux-python
       - selinux-policy
 
@@ -16,9 +16,7 @@
   selinux:
     state: "{{ osinit_selinux }}"
 
-- name: set timezone
-  timezone:
-    name: "{{ osinit_timezone }}"
+# ----- locale -----
 
 - name: detected locale status
   shell: "cat /etc/locale.conf | grep {{ osinit_locale }}"
@@ -28,6 +26,92 @@
   changed_when: locale_status.rc != 0
 
 - name: set locale
-  shell: "localectl set-locale LANG={{ osinit_locale }}"
+  command: "localectl set-locale LANG={{ osinit_locale }}"
   check_mode: no
   when: locale_status is changed
+
+# ----- timedate -----
+
+- name: set timezone
+  timezone:
+    name: "{{ osinit_timezone }}"
+
+- name: install chrony package
+  yum:
+    name: chrony
+
+- name: copy chrony conf
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    mode: 0644
+  notify: restart chronyd service
+
+- name: start chronyd service
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+
+# ----- sshd -----
+
+- name: install sshd package
+  yum:
+    name: openssh-server
+
+- name: copy sshd conf
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    mode: 0644
+  notify: restart sshd service
+
+- name: start sshd service
+  service:
+    name: sshd
+    state: started
+    enabled: yes
+
+# ----- firewall -----
+
+- name: install firewalld package
+  yum:
+    name: firewalld
+
+- name: start firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: detected firewall rules
+  command: iptables -L INPUT_direct
+  register: firewall_rules
+  failed_when: no
+  changed_when: firewall_rules.rc != 0
+
+- name: set firewall rules
+  command: "firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 0 {{ item }}"
+  with_items:
+    - '-p tcp --tcp-flags ALL NONE -j DROP'
+    - '-p tcp ! --syn -m state --state NEW -j DROP'
+    - '-p tcp --tcp-flags ALL ALL -j DROP'
+  notify: restart firewalld service
+  when: firewall_rules is changed
+
+# ----- kernel parameters -----
+
+- name: set kernel parameters
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - name: net.ipv6.conf.all.disable_ipv6
+      value: 1
+    - name: net.ipv6.conf.default.disable_ipv6
+      value: 1
+    - name: net.ipv4.tcp_syncookies
+      value: 1
+    - name: net.ipv4.icmp_echo_ignore_broadcasts
+      value: 1

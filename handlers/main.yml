@@ -1,0 +1,15 @@
+---
+- name: restart chronyd service
+  service:
+    name: chronyd
+    state: restarted
+
+- name: restart sshd service
+  service:
+    name: sshd
+    state: restarted
+
+- name: restart firewalld service
+  service:
+    name: firewalld
+    state: restarted
