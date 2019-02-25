@@ -1,4 +1,4 @@
-# ansible-role-env
+# ansible-role-osinit
 
 CentOS 7 の初期設定をおこなう ansible role です。
 
