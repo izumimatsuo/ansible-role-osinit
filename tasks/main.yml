@@ -88,6 +88,7 @@
   command: iptables -L INPUT_direct
   register: firewall_rules
   failed_when: no
+  check_mode: no
   changed_when: firewall_rules.rc != 0
 
 - name: set firewall rules (direct rule)
