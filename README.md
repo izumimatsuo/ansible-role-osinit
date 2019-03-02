@@ -1,4 +1,4 @@
-# ansible-role-osinit
+# ansible-role-osinit [![Build Status](https://travis-ci.org/izumimatsuo/ansible-role-osinit.svg?branch=master)](https://travis-ci.org/izumimatsuo/ansible-role-osinit)
 
 CentOS 7 の初期設定をおこなう ansible role です。
 
