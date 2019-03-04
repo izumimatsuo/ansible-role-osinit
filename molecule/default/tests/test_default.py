@@ -26,7 +26,6 @@ def test_os_env_locale(host):
 def test_os_env_kernel_parameters(host):
     assert 1 == host.sysctl('net.ipv6.conf.all.disable_ipv6')
     assert 1 == host.sysctl('net.ipv6.conf.default.disable_ipv6')
-    assert 1 == host.sysctl('net.ipv4.tcp_syncookies')
     assert 1 == host.sysctl('net.ipv4.icmp_echo_ignore_broadcasts')
     assert 1 == host.sysctl('net.ipv4.conf.all.rp_filter')
     assert 1 == host.sysctl('net.ipv4.conf.default.rp_filter')

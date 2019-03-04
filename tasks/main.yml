@@ -119,7 +119,6 @@
   notify: restart firewalld service
 
 # ----- kernel parameters -----
-#   - { name: net.ipv4.tcp_syncookies, value: 1 }
 
 - name: set kernel parameters
   sysctl:
