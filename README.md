@@ -20,7 +20,6 @@ CentOS 7 の初期設定をおこなう ansible role です。
   * ステルススキャンと思われる接続を破棄
 * カーネルパラメータの設定
   * ipv6 の無効化
-  * SYN flood 攻撃対策
   * Smurf 攻撃対策
   * IP Spoofing 攻撃対策
   * MITM 攻撃対策
