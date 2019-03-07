@@ -23,6 +23,7 @@ CentOS 7 の初期設定をおこなう ansible role です。
   * Smurf 攻撃対策
   * IP Spoofing 攻撃対策
   * MITM 攻撃対策
+  * バッファオーバーフロー対策
 
 ## 設定項目
 

@@ -23,6 +23,10 @@ def test_os_env_locale(host):
     assert 'ja_JP.UTF-8' in host.check_output('localectl | grep Locale')
 
 
+def test_os_env_execshield(host):
+    assert 0 == host.run("dmesg | grep '[NX|DX]*active$'").rc
+
+
 def test_os_env_kernel_parameters(host):
     assert 1 == host.sysctl('net.ipv6.conf.all.disable_ipv6')
     assert 1 == host.sysctl('net.ipv6.conf.default.disable_ipv6')
@@ -33,6 +37,7 @@ def test_os_env_kernel_parameters(host):
     assert 0 == host.sysctl('net.ipv4.conf.default.accept_redirects')
     assert 1 == host.sysctl('net.ipv4.conf.all.log_martians')
     assert 0 == host.sysctl('net.ipv4.ip_forward')
+    assert 2 == host.sysctl('kernel.randomize_va_space')
 
 
 def test_os_ntp_is_installed(host):
