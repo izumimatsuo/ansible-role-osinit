@@ -47,6 +47,15 @@
     mode: 0644
   notify: restart chronyd service
 
+- name: update chronyd servece file
+  replace:
+    dest: /usr/lib/systemd/system/chronyd.service
+    regexp: '^PIDFile='
+    replace: '# PIDFile='
+
+- name: daemon reload
+  systemd: daemon_reload=yes
+
 - name: start chronyd service
   service:
     name: chronyd
@@ -75,8 +84,16 @@
 # ----- firewall -----
 
 - name: install firewalld package
+  #  yum:
+  #    name: firewalld
+  # latest version was BUG. so dawngraded.
   yum:
-    name: firewalld
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - http://vault.centos.org/7.6.1810/os/x86_64/Packages/firewalld-0.5.3-5.el7.noarch.rpm
+      - http://vault.centos.org/7.6.1810/os/x86_64/Packages/firewalld-filesystem-0.5.3-5.el7.noarch.rpm
+      - http://vault.centos.org/7.6.1810/os/x86_64/Packages/python-firewall-0.5.3-5.el7.noarch.rpm
 
 - name: start firewalld service
   service:
