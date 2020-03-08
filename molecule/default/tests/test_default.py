@@ -8,7 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_os_env_distribution(host):
     assert host.system_info.distribution == 'centos'
-    assert '7.6' in host.check_output('cat /etc/redhat-release')
+    assert '7.7' in host.check_output('cat /etc/redhat-release')
 
 
 def test_os_env_selinux(host):
@@ -21,10 +21,6 @@ def test_os_env_timezone(host):
 
 def test_os_env_locale(host):
     assert 'ja_JP.UTF-8' in host.check_output('localectl | grep Locale')
-
-
-def test_os_env_execshield(host):
-    assert 0 == host.run("dmesg | grep '[NX|DX]*active$'").rc
 
 
 def test_os_env_kernel_parameters(host):
