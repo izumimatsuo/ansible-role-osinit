@@ -8,4 +8,3 @@ ssh_passwd_auth: 'yes'
 ssh_allow_users:
 ntp_public_servers: [ntp.nict.jp]
 ntp_allow_network:
-firewall_enabled_ports: [22/tcp]

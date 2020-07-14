@@ -8,7 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_os_env_distribution(host):
     assert host.system_info.distribution == 'centos'
-    assert '7.7' in host.check_output('cat /etc/redhat-release')
+    assert '7.8' in host.check_output('cat /etc/redhat-release')
 
 
 def test_os_env_selinux(host):
@@ -64,25 +64,3 @@ def test_os_sshd_running_and_enabled(host):
 
 def test_os_sshd_is_listen(host):
     assert host.socket('tcp://0.0.0.0:22').is_listening
-
-
-def test_os_firewalld_is_installed(host):
-    package = host.package('firewalld')
-    assert package.is_installed
-
-
-def test_os_firewalld_running_and_enabled(host):
-    service = host.service('firewalld')
-    assert service.is_running
-    assert service.is_enabled
-
-
-def test_os_firewalld_rules(host):
-    cmd = 'iptables -L INPUT_direct | grep '
-    rule1 = cmd + '"tcp flags:FIN,SYN,RST,PSH,ACK,URG/NONE"'
-    rule2 = cmd + '"tcp flags:!FIN,SYN,RST,ACK/SYN state NEW"'
-    rule3 = cmd + '"tcp flags:FIN,SYN,RST,PSH,ACK,URG/FIN,SYN,RST,PSH,ACK,URG"'
-    assert 0 == host.run(rule1).rc
-    assert 0 == host.run(rule2).rc
-    assert 0 == host.run(rule3).rc
-    assert '' == host.check_output('firewall-cmd --list-services')
