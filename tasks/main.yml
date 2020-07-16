@@ -10,8 +10,10 @@
     name:
       - curl
       - wget
+      - lsof
       - net-tools
       - bind-utils
+      - yum-utils
 
 - name: set hostname
   hostname:
