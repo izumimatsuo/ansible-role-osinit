@@ -19,9 +19,9 @@ Port {{ ssh_listen_port }}
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
-#HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_rsa_key
 #HostKey /etc/ssh/ssh_host_dsa_key
-#HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
 HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
@@ -64,8 +64,8 @@ PasswordAuthentication {{ ssh_passwd_auth }}
 PermitEmptyPasswords no
 
 # Change to no to disable s/key passwords
-#ChallengeResponseAuthentication yes
-ChallengeResponseAuthentication no
+ChallengeResponseAuthentication yes
+#ChallengeResponseAuthentication no
 
 # Kerberos options
 #KerberosAuthentication no
@@ -136,6 +136,12 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
+
+{% if ssh_twofactor_auth == 'no' %}
+AuthenticationMethods publickey
+{% else %}
+AuthenticationMethods publickey,keyboard-interactive
+{% endif %}
 
 {% if not ssh_allow_users %}
 #AllowUsers none
