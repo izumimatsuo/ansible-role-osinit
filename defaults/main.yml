@@ -3,9 +3,5 @@ env_selinux: disabled
 env_timezone: Asia/Tokyo
 env_locale: ja_JP.UTF-8
 ssh_listen_port: 22
-ssh_root_login: 'no'
-ssh_passwd_auth: 'no'
-ssh_twofactor_auth: 'no'
-ssh_allow_users:
 ntp_public_servers: [ntp.nict.jp]
 ntp_allow_network:

@@ -1,10 +1,6 @@
 ---
 # ----- basics -----
 
-- name: install epel repository
-  yum:
-    name: epel-release
-
 - name: install default package
   yum:
     name:
@@ -83,13 +79,6 @@
   yum:
     name:
       - openssh-server
-      - google-authenticator
-
-- name: copy pam sshd
-  template:
-    src: pam.sshd.j2
-    dest: /etc/pam.d/sshd
-    mode: 0644
 
 - name: copy sshd conf
   template:
