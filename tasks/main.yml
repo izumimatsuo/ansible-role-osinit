@@ -4,11 +4,13 @@
 - name: install default package
   yum:
     name:
+      - bash-completion
+      - bind-utils
       - curl
-      - wget
       - lsof
       - net-tools
-      - bind-utils
+      - python3
+      - wget
       - yum-utils
 
 - name: set hostname
