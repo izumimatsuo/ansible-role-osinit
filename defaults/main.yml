@@ -1,7 +1,7 @@
 ---
 env_selinux: disabled
 env_timezone: Asia/Tokyo
-env_locale: ja_JP.UTF-8
+env_locale: en_US.UTF-8
 ssh_listen_port: 22
 ntp_public_servers: [ntp.nict.jp]
 ntp_allow_network:

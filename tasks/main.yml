@@ -38,6 +38,11 @@
   failed_when: no
   changed_when: locale_status.rc != 0
 
+- name: local gen
+  shell: "set -o pipefail; echo {{ env_locale }} | awk -F '.' '{system(\"localedef -f \"$2\" -i \"$1\" \"$1)}'"
+  check_mode: no
+  when: locale_status is changed
+
 - name: set locale
   command: "localectl set-locale LANG={{ env_locale }}"
   check_mode: no

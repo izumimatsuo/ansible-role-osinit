@@ -5,7 +5,7 @@ CentOS 7 の初期設定をおこなう ansible role です。
 * selinux の設定
   * disabled
 * locale の設定
-  * ja_JP.UTF-8
+  * en_US.UTF-8
 * timezone and ntp の設定
   * Asia/Tokyo
   * ntp クライアントからの接続可否
@@ -27,7 +27,7 @@ CentOS 7 の初期設定をおこなう ansible role です。
 項目名                |デフォルト値|説明
 ----------------------|------------|-----------------------------------------------------
 env_timezone          |Asia/Tokyo  |タイムゾーン
-env_locale            |ja_JP.UTF-8 |言語・文字コード
+env_locale            |en_US.UTF-8 |言語・文字コード
 ntp_public_servers    |ntp.nict.jp |問合せ先 NTP サーバ（複数可）
 ntp_allow_network     |NULL        |NTP クライアントからアクセス許可する network アドレス
 ssh_listen_port       |22          |ssh のポート番号

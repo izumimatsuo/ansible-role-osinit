@@ -1,5 +1,7 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    env_locale: ja_JP.UTF-8
   roles:
     - role: ansible-role-osinit
