@@ -1,18 +1,6 @@
 ---
 # ----- basics -----
 
-- name: install default package
-  yum:
-    name:
-      - bash-completion
-      - bind-utils
-      - curl
-      - lsof
-      - net-tools
-      - python3
-      - wget
-      - yum-utils
-
 - name: set hostname
   hostname:
     name: "{{ inventory_hostname }}"
@@ -28,6 +16,7 @@
 - name: " {{ env_selinux }} selinux"
   selinux:
     state: "{{ env_selinux }}"
+  notify: reboot server
 
 # ----- locale -----
 
@@ -118,3 +107,4 @@
     - { name: net.ipv4.conf.default.accept_redirects, value: 0 }
     - { name: net.ipv4.conf.all.log_martians, value: 1 }
     - { name: kernel.randomize_va_space, value: 2 }
+  notify: reboot server
