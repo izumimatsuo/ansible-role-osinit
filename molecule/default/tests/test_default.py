@@ -8,7 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_os_env_distribution(host):
     assert host.system_info.distribution == 'centos'
-    assert '7.8' in host.check_output('cat /etc/redhat-release')
+    assert '7.9' in host.check_output('cat /etc/redhat-release')
 
 
 def test_os_env_selinux(host):
