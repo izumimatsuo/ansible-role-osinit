@@ -118,3 +118,4 @@
     src: hosts.j2
     dest: /etc/hosts
     backup: yes
+  when: hostvars[inventory_hostname].ansible_host is defined
