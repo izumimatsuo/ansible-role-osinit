@@ -1,4 +1,4 @@
-# ansible-role-osinit [![Build Status](https://travis-ci.org/izumimatsuo/ansible-role-osinit.svg?branch=master)](https://travis-ci.org/izumimatsuo/ansible-role-osinit)
+# ansible-role-osinit [![Build Status](https://travis-ci.com/izumimatsuo/ansible-role-osinit.svg?branch=master)](https://travis-ci.com/izumimatsuo/ansible-role-osinit)
 
 CentOS 7 の初期設定をおこなう ansible role です。
 
@@ -18,6 +18,8 @@ CentOS 7 の初期設定をおこなう ansible role です。
   * IP Spoofing 攻撃対策
   * MITM 攻撃対策
   * バッファオーバーフロー対策
+* リゾルバの設定
+  * インベントリファイルから /etc/hosts の設定
 
 ## 設定項目
 
