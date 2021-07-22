@@ -110,12 +110,3 @@
     - { name: net.ipv4.conf.all.log_martians, value: 1 }
     - { name: kernel.randomize_va_space, value: 2 }
   notify: reboot server
-
-# ----- host name resolver -----
-
-- name: update /etc/hosts
-  template:
-    src: hosts.j2
-    dest: /etc/hosts
-    backup: yes
-  when: hostvars[inventory_hostname].ansible_host is defined
