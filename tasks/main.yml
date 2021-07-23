@@ -16,7 +16,7 @@
 - name: " {{ env_selinux }} selinux"
   selinux:
     state: "{{ env_selinux }}"
-  notify: reboot server
+  register: ret_selinux
 
 # ----- locale -----
 
@@ -109,4 +109,8 @@
     - { name: net.ipv4.conf.default.accept_redirects, value: 0 }
     - { name: net.ipv4.conf.all.log_martians, value: 1 }
     - { name: kernel.randomize_va_space, value: 2 }
-  notify: reboot server
+  register: ret_kernel
+
+- name: reboot server
+  reboot:
+  when: test_skip is undefined and ret_selinux is changed or test_skip is undefined and ret_kernel is changed

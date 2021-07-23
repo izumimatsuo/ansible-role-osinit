@@ -8,7 +8,3 @@
   service:
     name: sshd
     state: restarted
-
-- name: reboot server
-  reboot:
-  when: test_skip is undefined
