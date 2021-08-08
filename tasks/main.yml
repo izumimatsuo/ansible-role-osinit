@@ -45,6 +45,10 @@
     name: "{{ env_timezone }}"
   notify: reboot server
 
+- name: install chrony package
+  yum:
+    name: chrony
+
 - name: update chrony conf
   template:
     src: chrony.conf.j2
@@ -62,7 +66,18 @@
 - name: daemon reload
   systemd: daemon_reload=yes
 
+- name: start chronyd service
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+
 # ----- sshd -----
+
+- name: install sshd package
+  yum:
+    name:
+      - openssh-server
 
 - name: update sshd conf
   template:
@@ -71,6 +86,12 @@
     mode: 0644
     backup: yes
   notify: restart sshd service
+
+- name: start sshd service
+  service:
+    name: sshd
+    state: started
+    enabled: yes
 
 # ----- kernel parameters -----
 
@@ -101,6 +122,6 @@
 - name: update all packages
   yum:
     name: '*'
-    state: latest
+    state: latest  # noqa 403
   notify: reboot server
   when: env_update_all_packages

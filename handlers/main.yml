@@ -11,3 +11,4 @@
 
 - name: reboot server
   reboot:
+  when: test_skip is undefined
