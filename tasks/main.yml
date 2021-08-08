@@ -13,10 +13,10 @@
       - libselinux-python
       - selinux-policy
 
-- name: " {{ env_selinux }} selinux"
+- name: "{{ env_selinux }} selinux"
   selinux:
     state: "{{ env_selinux }}"
-  register: ret_selinux
+  notify: reboot server
 
 # ----- locale -----
 
@@ -35,6 +35,7 @@
 - name: set locale
   command: "localectl set-locale LANG={{ env_locale }}"
   check_mode: no
+  notify: reboot server
   when: locale_status is changed
 
 # ----- timedate -----
@@ -42,12 +43,9 @@
 - name: set timezone
   timezone:
     name: "{{ env_timezone }}"
+  notify: reboot server
 
-- name: install chrony package
-  yum:
-    name: chrony
-
-- name: copy chrony conf
+- name: update chrony conf
   template:
     src: chrony.conf.j2
     dest: /etc/chrony.conf
@@ -55,7 +53,7 @@
     backup: yes
   notify: restart chronyd service
 
-- name: update chronyd servece file
+- name: update chronyd servece unit file
   replace:
     dest: /usr/lib/systemd/system/chronyd.service
     regexp: '^PIDFile='
@@ -64,32 +62,15 @@
 - name: daemon reload
   systemd: daemon_reload=yes
 
-- name: start chronyd service
-  service:
-    name: chronyd
-    state: started
-    enabled: yes
-
 # ----- sshd -----
 
-- name: install sshd package
-  yum:
-    name:
-      - openssh-server
-
-- name: copy sshd conf
+- name: update sshd conf
   template:
     src: sshd_config.j2
     dest: /etc/ssh/sshd_config
     mode: 0644
     backup: yes
   notify: restart sshd service
-
-- name: start sshd service
-  service:
-    name: sshd
-    state: started
-    enabled: yes
 
 # ----- kernel parameters -----
 
@@ -102,15 +83,24 @@
     - { name: net.ipv6.conf.all.disable_ipv6, value: 1 }
     - { name: net.ipv6.conf.default.disable_ipv6, value: 1 }
     - { name: net.ipv4.icmp_echo_ignore_broadcasts, value: 1 }
-    - { name: net.ipv4.ip_forward, value: 0 }
+    #    - { name: net.ipv4.ip_forward, value: 0 }
     - { name: net.ipv4.conf.all.rp_filter, value: 1 }
     - { name: net.ipv4.conf.default.rp_filter, value: 1 }
     - { name: net.ipv4.conf.all.accept_redirects, value: 0 }
     - { name: net.ipv4.conf.default.accept_redirects, value: 0 }
     - { name: net.ipv4.conf.all.log_martians, value: 1 }
     - { name: kernel.randomize_va_space, value: 2 }
-  register: ret_kernel
+  notify: reboot server
 
-- name: reboot server
-  reboot:
-  when: test_skip is undefined and ret_selinux is changed or test_skip is undefined and ret_kernel is changed
+# ----- packages -----
+
+- name: install additional packages
+  yum:
+    name: "{{ env_add_packages }}"
+
+- name: update all packages
+  yum:
+    name: '*'
+    state: latest
+  notify: reboot server
+  when: env_update_all_packages
