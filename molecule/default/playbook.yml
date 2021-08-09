@@ -3,7 +3,6 @@
   hosts: all
   vars:
     env_locale: ja_JP.UTF-8
-    env_update_all_packages: no
     test_skip: 'yes'
   roles:
     - role: ansible-role-osinit
