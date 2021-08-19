@@ -1,5 +1,5 @@
 ---
-# ----- basics -----
+# ----- hostname -----
 
 - name: set hostname
   hostname:
@@ -17,6 +17,19 @@
   selinux:
     state: "{{ env_selinux }}"
   notify: reboot server
+
+# ----- packages -----
+
+- name: update all packages
+  yum:
+    name: '*'
+    state: latest  # noqa 403
+  notify: reboot server
+  when: env_update_all_packages
+
+- name: install additional packages
+  yum:
+    name: "{{ env_add_packages }}"
 
 # ----- locale -----
 
@@ -93,6 +106,29 @@
     state: started
     enabled: yes
 
+# ----- ansible user -----
+
+- block:
+  - name: add ansible user
+    user:
+      name: '{{ auth_ansible_user }}'
+
+  - name: add ssh public key
+    authorized_key:
+      user: '{{ auth_ansible_user }}'
+      key: "{{ lookup('file', auth_ansible_public_key) }}"
+
+  - name: add ansible sudoers
+    lineinfile:
+      path: '/etc/sudoers.d/{{ auth_ansible_user }}'
+      create: yes
+      mode: '0600'
+      regexp: '^%{{ auth_ansible_user }}'
+      line: '%{{ auth_ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+      validate: '/usr/sbin/visudo -cf %s'
+
+  when: auth_ansible_user and auth_ansible_public_key
+
 # ----- kernel parameters -----
 
 - name: set kernel parameters
@@ -112,16 +148,3 @@
     - { name: net.ipv4.conf.all.log_martians, value: 1 }
     - { name: kernel.randomize_va_space, value: 2 }
   notify: reboot server
-
-# ----- packages -----
-
-- name: install additional packages
-  yum:
-    name: "{{ env_add_packages }}"
-
-- name: update all packages
-  yum:
-    name: '*'
-    state: latest  # noqa 403
-  notify: reboot server
-  when: env_update_all_packages
