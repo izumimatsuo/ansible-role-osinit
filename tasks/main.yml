@@ -109,23 +109,23 @@
 # ----- ansible user -----
 
 - block:
-  - name: add ansible user
-    user:
-      name: '{{ auth_ansible_user }}'
+    - name: add ansible user
+      user:
+        name: '{{ auth_ansible_user }}'
 
-  - name: add ssh public key
-    authorized_key:
-      user: '{{ auth_ansible_user }}'
-      key: "{{ lookup('file', auth_ansible_public_key) }}"
+    - name: add ssh public key
+      authorized_key:
+        user: '{{ auth_ansible_user }}'
+        key: "{{ lookup('file', auth_ansible_public_key) }}"
 
-  - name: add ansible sudoers
-    lineinfile:
-      path: '/etc/sudoers.d/{{ auth_ansible_user }}'
-      create: yes
-      mode: '0600'
-      regexp: '^%{{ auth_ansible_user }}'
-      line: '%{{ auth_ansible_user }} ALL=(ALL) NOPASSWD: ALL'
-      validate: '/usr/sbin/visudo -cf %s'
+    - name: add ansible sudoers
+      lineinfile:
+        path: '/etc/sudoers.d/{{ auth_ansible_user }}'
+        create: yes
+        mode: '0600'
+        regexp: '^%{{ auth_ansible_user }}'
+        line: '%{{ auth_ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
 
   when: auth_ansible_user and auth_ansible_public_key
 

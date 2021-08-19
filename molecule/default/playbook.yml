@@ -4,5 +4,7 @@
   vars:
     env_locale: ja_JP.UTF-8
     test_skip: 'yes'
+    auth_ansible_user:
+    auth_ansible_public_key:
   roles:
     - role: ansible-role-osinit
