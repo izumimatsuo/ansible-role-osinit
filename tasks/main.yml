@@ -106,28 +106,28 @@
     state: started
     enabled: yes
 
-# ----- ansible user -----
+# ----- admin user -----
 
 - block:
-    - name: add ansible user
+    - name: add admin user
       user:
-        name: '{{ auth_ansible_user }}'
+        name: '{{ auth_admin_user }}'
 
     - name: add ssh public key
       authorized_key:
-        user: '{{ auth_ansible_user }}'
-        key: "{{ lookup('file', auth_ansible_public_key) }}"
+        user: '{{ auth_admin_user }}'
+        key: "{{ lookup( 'url' if auth_admin_public_key.startswith('http') else 'file', auth_admin_public_key) }}"
 
-    - name: add ansible sudoers
+    - name: add admin sudoers
       lineinfile:
-        path: '/etc/sudoers.d/{{ auth_ansible_user }}'
+        path: '/etc/sudoers.d/{{ auth_admin_user }}'
         create: yes
         mode: '0600'
-        regexp: '^%{{ auth_ansible_user }}'
-        line: '%{{ auth_ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+        regexp: '^%{{ auth_admin_user }}'
+        line: '%{{ auth_admin_user }} ALL=(ALL) NOPASSWD: ALL'
         validate: '/usr/sbin/visudo -cf %s'
 
-  when: auth_ansible_user and auth_ansible_public_key
+  when: auth_admin_user and auth_admin_public_key
 
 # ----- kernel parameters -----
 
