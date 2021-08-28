@@ -70,9 +70,24 @@
     backup: yes
   notify: restart chronyd service
 
-- name: update chronyd servece unit file
+- name: detect chronyd service unit file
+  stat:
+    path: /etc/systemd/system/chronyd.service
+  register: chronyd_service
+
+- name: copy chronyd service unit file
+  copy:
+    src: /usr/lib/systemd/system/chronyd.service
+    dest: /etc/systemd/system/chronyd.service
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0644
+  when: not chronyd_service.stat.exists
+
+- name: update chronyd service unit file
   replace:
-    dest: /usr/lib/systemd/system/chronyd.service
+    dest: /etc/systemd/system/chronyd.service
     regexp: '^PIDFile='
     replace: '# PIDFile='
 
