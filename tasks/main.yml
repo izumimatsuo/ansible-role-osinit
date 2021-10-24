@@ -30,6 +30,7 @@
 - name: install additional packages
   yum:
     name: "{{ env_add_packages }}"
+    state: latest  # noqa 403
 
 # ----- locale -----
 
