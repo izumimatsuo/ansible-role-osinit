@@ -12,7 +12,9 @@ def test_os_env_distribution(host):
 
 
 def test_os_env_selinux(host):
-    assert 'Disabled' == host.check_output('getenforce')
+    cmd = host.run('getenforce')
+    assert 0 == cmd.rc
+    assert 'Enforcing' != cmd.stdout
 
 
 def test_os_env_timezone(host):

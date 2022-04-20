@@ -1,4 +1,6 @@
 ---
+# tasks file for ansible-role-osinit
+
 # ----- hostname -----
 
 - name: set hostname
@@ -7,15 +9,16 @@
 
 # ----- selinux -----
 
-- name: install selinux-tool package
+- name: install selinux packages
   yum:
     name:
       - libselinux-python
       - selinux-policy
 
-- name: "{{ env_selinux }} selinux"
+- name: "set '{{ 'enforcing' if env_selinux_enabled else 'permissive' }}' selinux"
   selinux:
-    state: "{{ env_selinux }}"
+    state: "{{ 'enforcing' if env_selinux_enabled else 'permissive' }}"
+    policy: 'targeted'
   notify: reboot server
 
 # ----- packages -----

@@ -1,5 +1,5 @@
 ---
-env_selinux: disabled
+env_selinux_enabled: no
 env_timezone: Asia/Tokyo
 env_locale: en_US.UTF-8
 env_update_all_packages: yes
