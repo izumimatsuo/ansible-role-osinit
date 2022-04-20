@@ -21,14 +21,16 @@
     policy: 'targeted'
   notify: reboot server
 
-# ----- packages -----
+# ----- yum update -----
 
-- name: update all packages
+- name: yum update all packages
   yum:
     name: '*'
     state: latest  # noqa 403
   notify: reboot server
-  when: env_update_all_packages
+  when: env_yum_update
+
+# ----- additional packages -----
 
 - name: install additional packages
   yum:

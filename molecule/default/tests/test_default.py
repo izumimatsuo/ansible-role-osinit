@@ -17,6 +17,16 @@ def test_os_env_selinux(host):
     assert 'Enforcing' != cmd.stdout
 
 
+def test_os_yum_update(host):
+    cmd = host.run('yum check-update')
+    assert 0 == cmd.rc
+
+
+def test_os_add_package_is_installed(host):
+    package = host.package('bash-completion')
+    assert package.is_installed
+
+
 def test_os_env_timezone(host):
     assert 'Asia/Tokyo' in host.check_output('timedatectl | grep "Time zone:"')
 
