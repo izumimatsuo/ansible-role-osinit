@@ -113,19 +113,21 @@
     name:
       - openssh-server
 
-- name: update sshd conf
-  template:
-    src: sshd_config.j2
-    dest: /etc/ssh/sshd_config
-    mode: 0644
-    backup: yes
-  notify: restart sshd service
-
 - name: start sshd service
   service:
     name: sshd
     state: started
     enabled: yes
+
+- name: set sshd publickey authentication 'yes'
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication '
+    insertafter: '^#PubkeyAuthentication '
+    line: 'PubkeyAuthentication yes'
+    backup: yes
+    validate: 'sshd -tf %s'
+  notify: restart sshd service
 
 # ----- admin user -----
 

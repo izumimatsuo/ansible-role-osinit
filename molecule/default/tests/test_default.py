@@ -54,12 +54,13 @@ def test_os_sshd_is_installed(host):
     package = host.package('openssh-server')
     assert package.is_installed
 
-
-def test_os_sshd_running_and_enabled(host):
     service = host.service('sshd')
     assert service.is_running
     assert service.is_enabled
 
-
-def test_os_sshd_is_listen(host):
     assert host.socket('tcp://0.0.0.0:22').is_listening
+
+
+def test_sec_sshd_pubkey_authenticate(host):
+    config = host.run('cat /etc/ssh/sshd_config')
+    assert 'PubkeyAuthentication yes' in config.stdout.split('\n')
