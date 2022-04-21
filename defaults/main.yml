@@ -1,9 +1,9 @@
 ---
 env_selinux_enabled: no
-env_timezone: Asia/Tokyo
-env_locale: en_US.UTF-8
 env_yum_update: yes
 env_add_packages: ['bash-completion']  # 'bind-utils', 'net-tools'
+env_timezone: Asia/Tokyo
+env_locale: en_US.UTF-8
 ssh_listen_port: 22
 ntp_public_servers: ['ntp.nict.jp']
 ntp_allow_network:
