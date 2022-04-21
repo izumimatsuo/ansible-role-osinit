@@ -32,22 +32,20 @@ def test_os_env_timezone(host):
 
 
 def test_os_env_locale(host):
-    assert 'ja_JP.UTF-8' in host.check_output('localectl | grep Locale')
+    assert 'en_US.UTF-8' in host.check_output('localectl | grep Locale')
 
 
 def test_os_ntp_is_installed(host):
     package = host.package('chrony')
     assert package.is_installed
 
-
-def test_os_ntp_running_and_enabled(host):
     service = host.service('chronyd')
     assert service.is_running
     assert service.is_enabled
 
 
-def test_os_ntp_is_listen(host):
-    assert host.socket('udp://0.0.0.0:123').is_listening
+def test_os_ntp_is_sync(host):
+    assert host.run('chronyc sources | grep "^.\\*"').succeeded
 
 
 def test_os_sshd_is_installed(host):

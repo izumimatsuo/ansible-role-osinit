@@ -5,3 +5,31 @@
     - name: setup net-tools package for test
       yum:
         name: net-tools
+
+    - name: install chrony package
+      yum:
+        name: chrony
+
+    - name: copy chronyd service unit file
+      copy:
+        src: /usr/lib/systemd/system/chronyd.service
+        dest: /etc/systemd/system/chronyd.service
+        remote_src: yes
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: update chronyd service unit file
+      replace:
+        dest: /etc/systemd/system/chronyd.service
+        regexp: '^PIDFile='
+        replace: '# PIDFile='
+
+    - name: daemon reload
+      systemd: daemon_reload=yes
+
+    - name: start chronyd service
+      service:
+        name: chronyd
+        state: started
+        enabled: yes

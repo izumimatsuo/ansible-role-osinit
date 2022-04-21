@@ -3,7 +3,7 @@
 
 # ----- hostname -----
 
-- name: set hostname
+- name: "set hostname '{{ inventory_hostname }}'"
   hostname:
     name: "{{ inventory_hostname }}"
 
@@ -39,19 +39,19 @@
 
 # ----- locale -----
 
-- name: detected locale status
+- name: check locale status
   shell: "cat /etc/locale.conf | grep {{ env_locale }}"
   register: locale_status
   check_mode: no
   failed_when: no
   changed_when: locale_status.rc != 0
 
-- name: local gen
+- name: locale gen
   shell: "set -o pipefail; echo {{ env_locale }} | awk -F '.' '{system(\"localedef -f \"$2\" -i \"$1\" \"$1)}'"
   check_mode: no
   when: locale_status is changed
 
-- name: set locale
+- name: "set locale '{{ env_locale }}'"
   command: "localectl set-locale LANG={{ env_locale }}"
   check_mode: no
   notify: reboot server
@@ -59,46 +59,16 @@
 
 # ----- timedate -----
 
-- name: set timezone
+- name: "set timezone '{{ env_timezone }}'"
   timezone:
     name: "{{ env_timezone }}"
   notify: reboot server
 
+# ----- ntp -----
+
 - name: install chrony package
   yum:
     name: chrony
-
-- name: update chrony conf
-  template:
-    src: chrony.conf.j2
-    dest: /etc/chrony.conf
-    mode: 0644
-    backup: yes
-  notify: restart chronyd service
-
-- name: detect chronyd service unit file
-  stat:
-    path: /etc/systemd/system/chronyd.service
-  register: chronyd_service
-
-- name: copy chronyd service unit file
-  copy:
-    src: /usr/lib/systemd/system/chronyd.service
-    dest: /etc/systemd/system/chronyd.service
-    remote_src: yes
-    owner: root
-    group: root
-    mode: 0644
-  when: not chronyd_service.stat.exists
-
-- name: update chronyd service unit file
-  replace:
-    dest: /etc/systemd/system/chronyd.service
-    regexp: '^PIDFile='
-    replace: '# PIDFile='
-
-- name: daemon reload
-  systemd: daemon_reload=yes
 
 - name: start chronyd service
   service:
@@ -132,7 +102,7 @@
 # ----- admin user -----
 
 - block:
-    - name: add admin user
+    - name: "add admin user '{{ auth_admin_user }}'"
       user:
         name: '{{ auth_admin_user }}'
 
