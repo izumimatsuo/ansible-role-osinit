@@ -64,8 +64,6 @@
     name: "{{ env_timezone }}"
   notify: reboot server
 
-# ----- ntp -----
-
 - name: install chrony package
   yum:
     name: chrony
@@ -75,6 +73,24 @@
     name: chronyd
     state: started
     enabled: yes
+
+- name: remove default time servers
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^server.+centos.pool.ntp.org'
+    state: absent
+    backup: yes
+
+- name: set custom time servers
+  blockinfile:
+    path: /etc/chrony.conf
+    insertafter: '^# Please consider joining the pool'
+    content: |
+      {% for item in env_time_servers %}
+      server {{ item }} iburst
+      {% endfor %}
+    backup: yes
+  notify: restart chronyd service
 
 # ----- sshd -----
 
