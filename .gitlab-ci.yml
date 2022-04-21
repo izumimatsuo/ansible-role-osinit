@@ -6,7 +6,7 @@ stages:
 
 before_script:
     - apt update -y && apt install -y docker.io
-    - pip install ansible==2.9.6 molecule==2.22 docker==4.2.0
+    - pip install ansible==2.9.6 molecule==2.22 docker==4.2.0 Jinja2==3.0.3 rich==10.0.0
 
 ansible_build:
     stage: build
