@@ -20,7 +20,7 @@ CentOS 7 の初期設定をおこなう ansible role です。
 
 | 項目名                  | デフォルト値 | 説明                                                  |
 | ----------------------- | ------------ | ----------------------------------------------------- |
-| env_selinux             | disabled     | selinux の適用有無                                    |
+| env_selinux_enabled     | no           | selinux の適用有無                                    |
 | env_yum_update          | yes          | パッケージの最新化                                    |
 | env_add_packages        | bash-completion | 追加パッケージ                                        |
 | env_locale              | en_US.UTF-8  | 言語・文字コード                                      |
